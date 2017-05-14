@@ -1,0 +1,48 @@
+version: '2'
+
+services:
+
+  couchdb1:
+    build: .
+    environment:
+      - NODENAME=couchdb1
+      - COUCHDB_COOKIE=mycookie
+      - COUCHDB_USER=admin
+      - COUCHDB_PASSWORD=admin
+    ports:
+      - "15984:5984"
+
+  setup:
+    build: . # TODO: find/build an image that is just a bash shell that can run curl
+    volumes:
+      - .:/src
+    command: bash -c "/src/wait-for-it.sh couchdb1:5984 -t 300 -- curl -X PUT http://admin:admin@couchdb1:5984/_users && curl -X PUT http://admin:admin@couchdb1:5986/_nodes/couchdb@couchdb2 -d {} && curl -X PUT http://admin:admin@couchdb1:5986/_nodes/couchdb@couchdb3 -d {}"
+    depends_on:
+      - couchdb1
+
+  couchdb2:
+    build: .
+    environment:
+      - NODENAME=couchdb2
+      - COUCHDB_COOKIE=mycookie
+      - COUCHDB_USER=admin
+      - COUCHDB_PASSWORD=admin
+    ports:
+      - "25984:5984"
+
+  couchdb3:
+    build: .
+    environment:
+      - NODENAME=couchdb3
+      - COUCHDB_COOKIE=mycookie
+      - COUCHDB_USER=admin
+      - COUCHDB_PASSWORD=admin
+    ports:
+      - "35984:5984"
+
+  haproxy:
+    image: haproxy:1.7.3
+    volumes:
+      - ./haproxy:/usr/local/etc/haproxy
+    ports:
+      - "5984:5984"
