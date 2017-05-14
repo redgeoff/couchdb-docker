@@ -9,6 +9,7 @@ services:
       - COUCHDB_COOKIE=mycookie
       - COUCHDB_USER=admin
       - COUCHDB_PASSWORD=admin
+      - COUCHDB_SECRET=mysecret
     ports:
       - "15984:5984"
 
@@ -27,6 +28,7 @@ services:
       - COUCHDB_COOKIE=mycookie
       - COUCHDB_USER=admin
       - COUCHDB_PASSWORD=admin
+      - COUCHDB_SECRET=mysecret
     ports:
       - "25984:5984"
 
@@ -37,6 +39,7 @@ services:
       - COUCHDB_COOKIE=mycookie
       - COUCHDB_USER=admin
       - COUCHDB_PASSWORD=admin
+      - COUCHDB_SECRET=mysecret
     ports:
       - "35984:5984"
 
