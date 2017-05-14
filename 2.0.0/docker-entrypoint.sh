@@ -23,8 +23,14 @@ if [ "$1" = '/opt/couchdb/bin/couchdb' ]; then
 	chmod 664 /opt/couchdb/etc/local.d/*.ini
 	chmod 775 /opt/couchdb/etc/*.d
 
+	# Use sname so that we can specify a short name, like those used by docker, instead of a host
 	if [ ! -z "$NODENAME" ] && ! grep "couchdb@" /opt/couchdb/etc/vm.args; then
-		echo "-name couchdb@$NODENAME" >> /opt/couchdb/etc/vm.args
+		# Cookie is needed so that the nodes can connect to each other using Erlang clustering
+		if [ -z "$COUCHDB_COOKIE" ]; then
+			echo "-sname couchdb@$NODENAME" >> /opt/couchdb/etc/vm.args
+		else
+			echo "-sname couchdb@$NODENAME -setcookie '$COUCHDB_COOKIE'" >> /opt/couchdb/etc/vm.args
+		fi
 	fi
 
 	if [ "$COUCHDB_USER" ] && [ "$COUCHDB_PASSWORD" ]; then
