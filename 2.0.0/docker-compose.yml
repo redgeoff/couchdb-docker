@@ -17,7 +17,7 @@ services:
     build: . # TODO: find/build an image that is just a bash shell that can run curl
     volumes:
       - .:/src
-    command: bash -c "/src/wait-for-it.sh couchdb1:5984 -t 300 -- curl -X PUT http://admin:admin@couchdb1:5984/_users && curl -X PUT http://admin:admin@couchdb1:5986/_nodes/couchdb@couchdb2 -d {} && curl -X PUT http://admin:admin@couchdb1:5986/_nodes/couchdb@couchdb3 -d {}"
+    command: bash -c "/src/wait-for-it.sh couchdb1:5984 -t 300 -- curl -X PUT http://admin:admin@couchdb1:5984/_users && curl -X PUT http://admin:admin@couchdb1:5984/_global_changes && curl -X PUT http://admin:admin@couchdb1:5984/_replicator && curl -X PUT http://admin:admin@couchdb1:5986/_nodes/couchdb@couchdb2 -d {} && curl -X PUT http://admin:admin@couchdb1:5986/_nodes/couchdb@couchdb3 -d {}"
     depends_on:
       - couchdb1
 
