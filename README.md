@@ -15,8 +15,9 @@ If you're looking for a CouchDB with SSL support you can check out [klaemo/couch
 Credit: this work is an extension of the excellent ideas at https://github.com/klaemo/docker-couchdb/issues/93#issuecomment-284704181
 
 - $ git clone https://github.com/redgeoff/couchdb-docker
+- $ cd couchdb-docker 
 - $ git checkout production-multi-node
-- $ cd production-multi-node/2.0.0
+- $ cd 2.0.0
 - $ docker-compose up
 - The 3 nodes can be accessed directly via http://localhost:15984/_utils, http://localhost:25984/_utils and http://localhost:35984/_utils
 - To access the cluster (proxied via haproxy) visit http://localhost:5984/_utils (TODO: as per http://stackoverflow.com/q/43958527/2831606, determine if the sessions can be persisted across nodes).
