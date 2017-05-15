@@ -39,6 +39,12 @@ if [ "$1" = '/opt/couchdb/bin/couchdb' ]; then
 		chown couchdb:couchdb /opt/couchdb/etc/local.d/docker.ini
 	fi
 
+	# As per https://github.com/apache/couchdb-docker/issues/9#issuecomment-301363800 need to use same
+	# hashed password across all nodes so that session cookies can be reused.
+	if [ "$COUCHDB_USER" ] && [ "$COUCHDB_HASHED_PASSWORD" ]; then
+		sed -i "s/;admin = mysecretpassword/$COUCHDB_USER = $COUCHDB_HASHED_PASSWORD/" /opt/couchdb/etc/local.ini
+	fi
+
 	if [ "$COUCHDB_SECRET" ]; then
 		# Set secret
 		printf "[couch_httpd_auth]\nsecret = %s\n" "$COUCHDB_SECRET" > /opt/couchdb/etc/local.d/secret.ini
