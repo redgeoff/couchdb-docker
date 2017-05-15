@@ -8,7 +8,7 @@ services:
       - NODENAME=couchdb1
       - COUCHDB_COOKIE=mycookie
       - COUCHDB_USER=admin
-      - COUCHDB_HASHED_PASSWORD=-pbkdf2-7d66a7d6c73f83173f5d0f73b7570203f443dffd,8dab49491e28d59980a6436521822458,10
+      - COUCHDB_PASSWORD=admin
       - COUCHDB_SECRET=mysecret
     ports:
       - "15984:5984"
@@ -27,7 +27,8 @@ services:
       - NODENAME=couchdb2
       - COUCHDB_COOKIE=mycookie
       - COUCHDB_USER=admin
-      - COUCHDB_HASHED_PASSWORD=-pbkdf2-7d66a7d6c73f83173f5d0f73b7570203f443dffd,8dab49491e28d59980a6436521822458,10
+      - COUCHDB_PASSWORD=admin
+      - COUCHDB_SYNC_ADMINS_NODE=couchdb1
       - COUCHDB_SECRET=mysecret
     ports:
       - "25984:5984"
@@ -38,7 +39,8 @@ services:
       - NODENAME=couchdb3
       - COUCHDB_COOKIE=mycookie
       - COUCHDB_USER=admin
-      - COUCHDB_HASHED_PASSWORD=-pbkdf2-7d66a7d6c73f83173f5d0f73b7570203f443dffd,8dab49491e28d59980a6436521822458,10
+      - COUCHDB_PASSWORD=admin
+      - COUCHDB_SYNC_ADMINS_NODE=couchdb1
       - COUCHDB_SECRET=mysecret
     ports:
       - "35984:5984"

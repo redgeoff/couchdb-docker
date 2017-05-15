@@ -99,6 +99,8 @@ COPY vm.args /opt/couchdb/etc/
 
 COPY ./docker-entrypoint.sh /
 
+COPY ./wait-for-it.sh /usr/src
+
 # Setup directories and permissions
 RUN chmod +x /docker-entrypoint.sh \
  && mkdir /opt/couchdb/data /opt/couchdb/etc/default.d \

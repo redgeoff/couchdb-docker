@@ -23,6 +23,13 @@ if [ "$1" = '/opt/couchdb/bin/couchdb' ]; then
 	chmod 664 /opt/couchdb/etc/local.d/*.ini
 	chmod 775 /opt/couchdb/etc/*.d
 
+	if [ "$COUCHDB_SYNC_ADMINS_NODE" ]; then
+		# Wait until the node is ready and then retrieve the hashed password. As per
+		# https://github.com/apache/couchdb-docker/issues/9#issuecomment-301363800 need to use same
+		# hashed password across all nodes so that session cookies can be reused.
+		COUCHDB_HASHED_PASSWORD=`/usr/src/wait-for-it.sh $COUCHDB_SYNC_ADMINS_NODE:5984 -t 300 -- curl http://$COUCHDB_USER:$COUCHDB_PASSWORD@$COUCHDB_SYNC_ADMINS_NODE:5984/_node/couchdb@$COUCHDB_SYNC_ADMINS_NODE/_config/admins/$COUCHDB_USER | sed "s/^\([\"]\)\(.*\)\1\$/\2/g"`
+	fi
+
 	# Use sname so that we can specify a short name, like those used by docker, instead of a host
 	if [ ! -z "$NODENAME" ] && ! grep "couchdb@" /opt/couchdb/etc/vm.args; then
 		# Cookie is needed so that the nodes can connect to each other using Erlang clustering
@@ -33,16 +40,15 @@ if [ "$1" = '/opt/couchdb/bin/couchdb' ]; then
 		fi
 	fi
 
-	if [ "$COUCHDB_USER" ] && [ "$COUCHDB_PASSWORD" ]; then
+	if [ "$COUCHDB_USER" ] && [ "$COUCHDB_PASSWORD" ] && [ -z "$COUCHDB_SYNC_ADMINS_NODE" ]; then
 		# Create admin
 		printf "[admins]\n%s = %s\n" "$COUCHDB_USER" "$COUCHDB_PASSWORD" > /opt/couchdb/etc/local.d/docker.ini
 		chown couchdb:couchdb /opt/couchdb/etc/local.d/docker.ini
 	fi
 
-	# As per https://github.com/apache/couchdb-docker/issues/9#issuecomment-301363800 need to use same
-	# hashed password across all nodes so that session cookies can be reused.
 	if [ "$COUCHDB_USER" ] && [ "$COUCHDB_HASHED_PASSWORD" ]; then
-		sed -i "s/;admin = mysecretpassword/$COUCHDB_USER = $COUCHDB_HASHED_PASSWORD/" /opt/couchdb/etc/local.ini
+		printf "[admins]\n%s = %s\n" "$COUCHDB_USER" "$COUCHDB_HASHED_PASSWORD" > /opt/couchdb/etc/local.d/docker.ini
+		chown couchdb:couchdb /opt/couchdb/etc/local.d/docker.ini
 	fi
 
 	if [ "$COUCHDB_SECRET" ]; then
