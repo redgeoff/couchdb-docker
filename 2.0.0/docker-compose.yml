@@ -3,7 +3,10 @@ version: '2'
 services:
 
   couchdb1:
-    build: .
+    image: redgeoff/couchdb-docker
+    cpu_shares: 100
+    mem_limit: 104857600
+    # mem_limit: 268435456
     environment:
       - NODENAME=couchdb1
       - COUCHDB_COOKIE=mycookie
@@ -13,16 +16,22 @@ services:
     ports:
       - "15984:5984"
 
-  setup:
-    build: . # TODO: find/build an image that is just a bash shell that can run curl
-    volumes:
-      - .:/src
-    command: bash -c "/src/wait-for-it.sh couchdb1:5984 -t 300 -- curl -X PUT http://admin:admin@couchdb1:5984/_users && curl -X PUT http://admin:admin@couchdb1:5984/_global_changes && curl -X PUT http://admin:admin@couchdb1:5984/_replicator && curl -X PUT http://admin:admin@couchdb1:5986/_nodes/couchdb@couchdb2 -d {} && curl -X PUT http://admin:admin@couchdb1:5986/_nodes/couchdb@couchdb3 -d {}"
-    depends_on:
-      - couchdb1
+  # setup:
+  #   image: redgeoff/couchdb-docker # TODO: find/build an image that is just a bash shell that can run curl
+  #   cpu_shares: 100
+  #   # mem_limit: 104857600
+  #   mem_limit: 268435456
+  #   volumes:
+  #     - .:/src
+  #   command: bash -c "/src/wait-for-it.sh couchdb1:5984 -t 300 -- curl -X PUT http://admin:admin@couchdb1:5984/_users && curl -X PUT http://admin:admin@couchdb1:5984/_global_changes && curl -X PUT http://admin:admin@couchdb1:5984/_replicator && curl -X PUT http://admin:admin@couchdb1:5986/_nodes/couchdb@couchdb2 -d {} && curl -X PUT http://admin:admin@couchdb1:5986/_nodes/couchdb@couchdb3 -d {}"
+  #   depends_on:
+  #     - couchdb1
 
   couchdb2:
-    build: .
+    image: redgeoff/couchdb-docker
+    cpu_shares: 100
+    mem_limit: 104857600
+    # mem_limit: 268435456
     environment:
       - NODENAME=couchdb2
       - COUCHDB_COOKIE=mycookie
@@ -33,7 +42,10 @@ services:
       - "25984:5984"
 
   couchdb3:
-    build: .
+    image: redgeoff/couchdb-docker
+    cpu_shares: 100
+    mem_limit: 104857600
+    # mem_limit: 268435456
     environment:
       - NODENAME=couchdb3
       - COUCHDB_COOKIE=mycookie
@@ -43,9 +55,12 @@ services:
     ports:
       - "35984:5984"
 
-  haproxy:
-    image: haproxy:1.7.3
-    volumes:
-      - ./haproxy:/usr/local/etc/haproxy
-    ports:
-      - "5984:5984"
+  # haproxy:
+  #   image: haproxy:1.7.3
+  #   cpu_shares: 100
+  #   mem_limit: 104857600
+  #   # mem_limit: 268435456
+  #   volumes:
+  #     - ./haproxy:/usr/local/etc/haproxy
+  #   ports:
+  #     - "5984:5984"
